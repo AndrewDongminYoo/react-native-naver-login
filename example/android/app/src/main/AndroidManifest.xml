@@ -23,5 +23,8 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+      <activity
+        android:name="com.navercorp.nid.oauth.OAuthLoginActivity"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 </manifest>

@@ -31,7 +31,16 @@
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
 			<string>naverloginexample</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>naverloginexample</string>
+			</array>
 		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

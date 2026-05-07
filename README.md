@@ -15,6 +15,7 @@ React Native **New Architecture(TurboModule)** 기반의 네이버 OAuth 2.0 로
 - [사용법](#사용법)
 - [API 레퍼런스](#api-레퍼런스)
 - [동작 방식 및 주의사항](#동작-방식-및-주의사항)
+- [예제 앱 실행하기](#예제-앱-실행하기)
 - [@react-native-seoul/naver-login 마이그레이션](#react-native-seoulnaver-login-마이그레이션)
 - [문제 해결](#문제-해결)
 - [라이선스](#라이선스)
@@ -393,6 +394,104 @@ iOS와 Android 모두 동시에 두 번째 `login()` 요청이 들어오면 즉�
 ```typescript
 const expiresAt = new Date(parseInt(expiresAtUnixSecondString, 10) * 1000);
 ```
+
+---
+
+## 예제 앱 실행하기
+
+`example/` 디렉터리에 동작 확인용 예제 앱이 포함되어 있습니다. 실행 전 아래 체크리스트를 완료해야 합니다.
+
+### 체크리스트
+
+#### 1단계: 네이버 개발자 센터에 앱 등록
+
+[네이버 개발자 센터](https://developers.naver.com/apps/#/register)에서 애플리케이션을 등록합니다.
+
+| 항목                        | 입력값                                                                        |
+| --------------------------- | ----------------------------------------------------------------------------- |
+| 사용 API                    | 네이버 로그인                                                                 |
+| iOS 번들 ID                 | Xcode에서 확인한 번들 ID (예: `org.reactjs.native.example.NaverLoginExample`) |
+| Android 패키지명            | `com.naverloginexample`                                                       |
+| Android 앱 서명 (`keyhash`) | 개발용: `adb shell` 또는 `keytool`로 추출한 debug.keystore 해시               |
+
+등록 완료 후 **Client ID**와 **Client Secret**을 발급받습니다.
+
+#### 2단계: `example/src/App.tsx` 자격증명 입력
+
+파일 상단 3개 상수를 실제 값으로 교체합니다.
+
+```typescript
+// example/src/App.tsx
+const CLIENT_ID = 'YOUR_CLIENT_ID'; // ← 발급받은 Client ID
+const CLIENT_SECRET = 'YOUR_CLIENT_SECRET'; // ← 발급받은 Client Secret
+const URL_SCHEME = 'naverloginexample'; // ← 이미 설정됨 (변경 불필요)
+```
+
+#### 3단계: iOS `Info.plist` 확인 (이미 완료됨)
+
+`example/ios/NaverLoginExample/Info.plist`에 아래 항목이 이미 설정되어 있습니다.
+
+```xml
+<!-- URL Scheme: 네이버 앱에서 돌아오는 콜백 수신 -->
+<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>naverloginexample</string>
+    </array>
+  </dict>
+</array>
+
+<!-- 네이버 앱 설치 여부 확인용 -->
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>naversearchapp</string>
+  <string>naversearchthirdlogin</string>
+</array>
+```
+
+> **CFBundleURLSchemes 누락은 가장 흔한 실수입니다.** 이 배열이 없으면 네이버 앱 로그인 후 콜백을 받지 못해 `Failed to open URL naverloginexample://thirdPartyLoginResult` 오류가 발생합니다.
+
+#### 4단계: Android `AndroidManifest.xml` 확인 (이미 완료됨)
+
+`example/android/app/src/main/AndroidManifest.xml`에 아래 액티비티가 이미 등록되어 있습니다.
+
+```xml
+<activity
+  android:name="com.navercorp.nid.oauth.OAuthLoginActivity"
+  android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+```
+
+#### 5단계: 예제 앱 실행
+
+```sh
+# 의존성 설치 (최초 1회)
+yarn
+cd example/ios && pod install && cd ../..
+
+# 실행
+yarn example start   # Metro 번들러 (별도 터미널에서)
+yarn example ios     # iOS 시뮬레이터
+yarn example android # Android 에뮬레이터 또는 실기기
+```
+
+### iOS 실기기 테스트 시 추가 설정
+
+시뮬레이터에는 네이버 앱이 없으므로 WebView 로그인으로 진행됩니다. 실기기에서 네이버 앱 연동을 테스트하려면 Xcode에서 올바른 **Team**과 **Provisioning Profile**이 설정되어 있어야 합니다.
+
+### Android 실기기 테스트 시 추가 설정
+
+네이버 개발자 센터에 등록할 **앱 서명 해시**를 아래 명령으로 추출합니다.
+
+```sh
+# debug.keystore 해시 추출 (개발 시)
+keytool -exportcert -keystore ~/.android/debug.keystore \
+  -alias androiddebugkey -storepass android | \
+  openssl sha1 -binary | openssl base64
+```
+
+출력된 해시를 네이버 개발자 센터의 Android 앱 등록 항목 "앱 서명 인증서의 SHA-1 지문" 란에 입력합니다.
 
 ---
 
