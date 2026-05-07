@@ -41,7 +41,19 @@ class NaverLoginModule(
   override fun login(promise: Promise) {
     val activity =
       currentActivity ?: run {
-        promise.reject("NO_ACTIVITY", "NaverLogin.login() called with no current Activity.")
+        val failureResponse =
+          WritableNativeMap().apply {
+            putString("message", "NaverLogin.login() called with no current Activity.")
+            putBoolean("isCancel", false)
+            putString("lastErrorCodeFromNaverSDK", "")
+            putString("lastErrorDescriptionFromNaverSDK", "")
+          }
+        promise.resolve(
+          WritableNativeMap().apply {
+            putBoolean("isSuccess", false)
+            putMap("failureResponse", failureResponse)
+          },
+        )
         return
       }
 
@@ -126,6 +138,7 @@ class NaverLoginModule(
     val callback =
       object : OAuthLoginCallback {
         override fun onSuccess() {
+          NaverIdLoginSDK.logout()
           promise.resolve(null)
         }
 
@@ -143,7 +156,7 @@ class NaverLoginModule(
           promise.reject("DELETE_TOKEN_ERROR", message)
         }
       }
-    NaverIdLoginSDK.logout()
+    // Revoke server-side first; clear local state (logout) only after server confirms.
     NaverIdLoginSDK.callDeleteTokenApi(reactApplicationContext, callback)
   }
 

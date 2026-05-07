@@ -134,6 +134,17 @@
             reject(@"PROFILE_ERROR", error.localizedDescription, error);
             return;
         }
+        if (!data) {
+            reject(@"PROFILE_ERROR", @"Empty response body", nil);
+            return;
+        }
+        NSHTTPURLResponse *http = (NSHTTPURLResponse *)response;
+        if (http.statusCode < 200 || http.statusCode >= 300) {
+            reject(@"PROFILE_HTTP_ERROR",
+                   [NSString stringWithFormat:@"HTTP %ld", (long)http.statusCode],
+                   nil);
+            return;
+        }
         NSError *parseError = nil;
         id json = [NSJSONSerialization JSONObjectWithData:data
                                                   options:0
