@@ -56,16 +56,34 @@ describe('NaverLogin', () => {
     expect(result).toEqual(successResponse);
   });
 
-  it('login resolves with isSuccess false on failure', async () => {
-    const failureResponse = {
+  it('login resolves with isSuccess false on user cancellation', async () => {
+    native.login.mockResolvedValue({
       isSuccess: false,
       failureResponse: { message: 'cancelled', isCancel: true },
-    };
-    native.login.mockResolvedValue(failureResponse);
+    });
 
     const result = await NaverLogin.login();
     expect(result.isSuccess).toBe(false);
     expect(result.failureResponse?.isCancel).toBe(true);
+  });
+
+  it('login resolves with isSuccess false on SDK error (non-cancel)', async () => {
+    native.login.mockResolvedValue({
+      isSuccess: false,
+      failureResponse: {
+        message: 'Network error',
+        isCancel: false,
+        lastErrorCodeFromNaverSDK: 'NETWORK_ERROR',
+        lastErrorDescriptionFromNaverSDK: 'Connection timed out',
+      },
+    });
+
+    const result = await NaverLogin.login();
+    expect(result.isSuccess).toBe(false);
+    expect(result.failureResponse?.isCancel).toBe(false);
+    expect(result.failureResponse?.lastErrorCodeFromNaverSDK).toBe(
+      'NETWORK_ERROR'
+    );
   });
 
   it('logout calls native logout', async () => {
@@ -74,10 +92,22 @@ describe('NaverLogin', () => {
     expect(native.logout).toHaveBeenCalledTimes(1);
   });
 
+  it('logout propagates native rejection', async () => {
+    native.logout.mockRejectedValue(new Error('Network error'));
+    await expect(NaverLogin.logout()).rejects.toThrow('Network error');
+  });
+
   it('deleteToken calls native deleteToken', async () => {
     native.deleteToken.mockResolvedValue(undefined);
     await NaverLogin.deleteToken();
     expect(native.deleteToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('deleteToken propagates native rejection', async () => {
+    native.deleteToken.mockRejectedValue(new Error('DELETE_TOKEN_FAILED'));
+    await expect(NaverLogin.deleteToken()).rejects.toThrow(
+      'DELETE_TOKEN_FAILED'
+    );
   });
 
   it('getProfile calls native getProfile with accessToken', async () => {
@@ -103,5 +133,12 @@ describe('NaverLogin', () => {
     const result = await NaverLogin.getProfile('my-access-token');
     expect(native.getProfile).toHaveBeenCalledWith('my-access-token');
     expect(result.response.id).toBe('12345');
+  });
+
+  it('getProfile propagates native rejection', async () => {
+    native.getProfile.mockRejectedValue(new Error('PROFILE_ERROR'));
+    await expect(NaverLogin.getProfile('bad-token')).rejects.toThrow(
+      'PROFILE_ERROR'
+    );
   });
 });
