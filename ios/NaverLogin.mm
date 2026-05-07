@@ -9,6 +9,9 @@
 // Stored while a login() Promise is in flight. nil when idle.
 @property (nonatomic, copy, nullable) RCTPromiseResolveBlock loginResolve;
 @property (nonatomic, copy, nullable) RCTPromiseRejectBlock loginReject;
+// Stored while a deleteToken() Promise is in flight. nil when idle.
+@property (nonatomic, copy, nullable) RCTPromiseResolveBlock deleteTokenResolve;
+@property (nonatomic, copy, nullable) RCTPromiseRejectBlock deleteTokenReject;
 @end
 
 @implementation NaverLogin
@@ -70,6 +73,11 @@
     }
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 // -------------------------------------------------------------------------
 // login
 // -------------------------------------------------------------------------
@@ -93,25 +101,27 @@
 }
 
 // -------------------------------------------------------------------------
-// logout
+// logout — clears local tokens only (no server revocation)
 // -------------------------------------------------------------------------
 
 - (void)logout:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
-    [[NaverThirdPartyLoginConnection getSharedInstance] requestDeleteToken];
+    [[NaverThirdPartyLoginConnection getSharedInstance] resetToken];
     resolve(nil);
 }
 
 // -------------------------------------------------------------------------
-// deleteToken
+// deleteToken — server revocation then local clear
 // -------------------------------------------------------------------------
 
 - (void)deleteToken:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
+    self.deleteTokenResolve = resolve;
+    self.deleteTokenReject  = reject;
+
     NaverThirdPartyLoginConnection *conn = [NaverThirdPartyLoginConnection getSharedInstance];
+    conn.delegate = self;
     [conn requestDeleteToken];
-    [conn requestUnlinkToken];
-    resolve(nil);
 }
 
 // -------------------------------------------------------------------------
@@ -175,24 +185,54 @@
 
 - (void)oauth20ConnectionDidFinishDeleteToken
 {
-    // logout/deleteToken resolve immediately; nothing to do here.
+    // Server revocation succeeded — clear local tokens now.
+    [[NaverThirdPartyLoginConnection getSharedInstance] resetToken];
+    if (self.deleteTokenResolve) {
+        self.deleteTokenResolve(nil);
+        self.deleteTokenResolve = nil;
+        self.deleteTokenReject  = nil;
+    }
 }
 
-- (void)oauth20Connection:(NaverThirdPartyLoginConnection *)connection
-     didFailWithRequestType:(NaverThirdPartyLoginConnectionRequestType)requestType
+// Required delegate method: called for login failures and deleteToken failures.
+- (void)oauth20Connection:(NaverThirdPartyLoginConnection *)oauthConnection
+        didFailWithError:(NSError *)error
 {
-    NSString *errorCode = connection.lastErrorCode ?: @"";
-    BOOL isCancel = [errorCode isEqualToString:@"user_cancel"];
-
-    NSDictionary *result = @{
-        @"isSuccess": @NO,
-        @"failureResponse": @{
-            @"message": connection.lastErrorDescription ?: @"Unknown error",
-            @"isCancel": @(isCancel),
-        }
-    };
-
     if (self.loginResolve) {
+        // CANCELBYUSER == 2 per NaverThirdPartyConstantsForApp.h
+        BOOL isCancel = (error.code == CANCELBYUSER);
+        NSDictionary *result = @{
+            @"isSuccess": @NO,
+            @"failureResponse": @{
+                @"message": error.localizedDescription ?: @"Unknown error",
+                @"isCancel": @(isCancel),
+            }
+        };
+        self.loginResolve(result);
+        self.loginResolve = nil;
+        self.loginReject  = nil;
+    } else if (self.deleteTokenReject) {
+        self.deleteTokenReject(@"DELETE_TOKEN_FAILED",
+                               error.localizedDescription ?: @"Unknown error",
+                               error);
+        self.deleteTokenResolve = nil;
+        self.deleteTokenReject  = nil;
+    }
+}
+
+// Optional delegate method: fired when the auth flow fails with a typed reason.
+// Handles cancel before didFailWithError: clears loginResolve.
+- (void)oauth20Connection:(NaverThirdPartyLoginConnection *)oauthConnection
+  didFailAuthorizationWithReceiveType:(THIRDPARTYLOGIN_RECEIVE_TYPE)receiveType
+{
+    if (receiveType == CANCELBYUSER && self.loginResolve) {
+        NSDictionary *result = @{
+            @"isSuccess": @NO,
+            @"failureResponse": @{
+                @"message": @"User cancelled.",
+                @"isCancel": @YES,
+            }
+        };
         self.loginResolve(result);
         self.loginResolve = nil;
         self.loginReject  = nil;
@@ -205,12 +245,17 @@
 
 - (void)resolveLoginWithConnection:(NaverThirdPartyLoginConnection *)conn
 {
+    NSString *expiresAt = conn.accessTokenExpireDate
+        ? [NSString stringWithFormat:@"%.0f",
+           [conn.accessTokenExpireDate timeIntervalSince1970]]
+        : @"";
+
     NSDictionary *result = @{
         @"isSuccess": @YES,
         @"successResponse": @{
             @"accessToken":              conn.accessToken  ?: @"",
             @"refreshToken":             conn.refreshToken ?: @"",
-            @"expiresAtUnixSecondString": conn.expiresAt   ?: @"",
+            @"expiresAtUnixSecondString": expiresAt,
             @"tokenType":                conn.tokenType    ?: @"",
         }
     };
