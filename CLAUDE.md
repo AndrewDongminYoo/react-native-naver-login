@@ -46,7 +46,7 @@ yarn release                    # bumps version, tags, publishes via release-it
 
 The JS↔Native bridge is driven by codegen. The spec lives in `src/NativeNaverLogin.ts`:
 
-```
+```log
 src/NativeNaverLogin.ts   ← TypeScript spec (TurboModule interface)
         │
         ▼

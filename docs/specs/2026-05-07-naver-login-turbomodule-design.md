@@ -53,7 +53,7 @@ NaverLogin.getProfile(accessToken: string): Promise<GetProfileResponse>
 
 ### Data Flow
 
-```
+```log
 JS call
   └─ NaverLogin.native.tsx  (type-safe wrapper)
        └─ NativeNaverLogin  (TurboModule bridge, codegen-generated)
@@ -111,7 +111,7 @@ Files removed: `src/multiply.tsx`, `src/multiply.native.tsx`
 
 ## Files Changed
 
-```
+```log
 src/NativeNaverLogin.ts          modified (spec replacement)
 src/NaverLogin.native.tsx        new
 src/NaverLogin.tsx               new
