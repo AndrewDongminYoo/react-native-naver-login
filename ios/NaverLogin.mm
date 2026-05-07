@@ -39,13 +39,13 @@
 {
     NaverThirdPartyLoginConnection *conn = [NaverThirdPartyLoginConnection getSharedInstance];
 
-    conn.consumerKey    = [NSString stringWithUTF8String:params.consumerKey().c_str()];
-    conn.consumerSecret = [NSString stringWithUTF8String:params.consumerSecret().c_str()];
-    conn.appName        = [NSString stringWithUTF8String:params.appName().c_str()];
+    conn.consumerKey    = params.consumerKey();
+    conn.consumerSecret = params.consumerSecret();
+    conn.appName        = params.appName();
 
-    auto serviceScheme = params.serviceUrlSchemeIOS();
-    if (serviceScheme.has_value()) {
-        conn.serviceUrlScheme = [NSString stringWithUTF8String:serviceScheme.value().c_str()];
+    NSString *serviceScheme = params.serviceUrlSchemeIOS();
+    if (serviceScheme != nil) {
+        conn.serviceUrlScheme = serviceScheme;
     }
 
     auto disableApp = params.disableNaverAppAuthIOS();
