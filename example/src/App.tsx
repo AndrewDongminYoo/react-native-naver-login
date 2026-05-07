@@ -15,7 +15,7 @@ import NaverLogin, {
 
 const CLIENT_ID = 'YOUR_CLIENT_ID';
 const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
-const URL_SCHEME = 'YOUR_URL_SCHEME';
+const URL_SCHEME = 'naverloginexample';
 
 type AppState =
   | { kind: 'idle' }
