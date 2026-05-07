@@ -1,0 +1,16 @@
+# Custom Dictionary Words
+codegen
+Dongmin
+gradlew
+naverlogin
+nvmrc
+objc
+pbxproj
+Podfile
+podspec
+shellcheck
+Srcs
+watchmanconfig
+xcodeproj
+xcworkspace
+yarnrc
