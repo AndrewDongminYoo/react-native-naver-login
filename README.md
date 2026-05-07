@@ -1,4 +1,4 @@
-# react-native-naver-login
+# @dongminyu/react-native-naver-login
 
 React Native **New Architecture(TurboModule)** 기반의 네이버 OAuth 2.0 로그인 라이브러리입니다.
 [`@react-native-seoul/naver-login`](https://github.com/crossplatformkorea/react-native-naver-login)의 공개 API와 호환되도록 설계되어 기존 프로젝트에서 drop-in 교체가 가능합니다.
@@ -50,9 +50,9 @@ React Native **New Architecture(TurboModule)** 기반의 네이버 OAuth 2.0 로
 ## 설치
 
 ```sh
-npm install react-native-naver-login
+npm install @dongminyu/react-native-naver-login
 # 또는
-yarn add react-native-naver-login
+yarn add @dongminyu/react-native-naver-login
 ```
 
 ### iOS
@@ -137,7 +137,7 @@ Proguard를 사용하는 경우 다음 규칙을 추가합니다.
 앱 시작 시 한 번만 호출합니다. 일반적으로 루트 컴포넌트의 `useEffect` 내에서 호출합니다.
 
 ```typescript
-import NaverLogin from 'react-native-naver-login';
+import NaverLogin from '@dongminyu/react-native-naver-login';
 
 NaverLogin.initialize({
   consumerKey: 'YOUR_CLIENT_ID',
@@ -211,7 +211,7 @@ import { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
 import NaverLogin, {
   type NaverLoginSuccessResponse,
-} from 'react-native-naver-login';
+} from '@dongminyu/react-native-naver-login';
 
 export default function LoginScreen() {
   const [token, setToken] = useState<NaverLoginSuccessResponse | null>(null);
@@ -511,7 +511,6 @@ keytool -exportcert -keystore ~/.android/debug.keystore \
 - `initialize()`, `login()`, `logout()`, `deleteToken()`, `getProfile()` 시그니처 동일
 - `NaverLoginResponse`, `NaverLoginSuccessResponse`, `NaverLoginFailureResponse` 타입 동일
 - `login()`이 절대 reject하지 않는 계약 동일
-- import 경로: `react-native-naver-login`
 
 ---
 

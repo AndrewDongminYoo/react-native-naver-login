@@ -1,5 +1,5 @@
 {
-  "name": "react-native-naver-login",
+  "name": "@dongminyu/react-native-naver-login",
   "version": "0.1.0",
   "description": "A React Native library providing support for Naver Authentication on iOS and Android.",
   "main": "./lib/module/index.js",
