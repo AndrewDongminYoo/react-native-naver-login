@@ -4,14 +4,11 @@ A React Native library providing support for Naver Authentication on iOS and And
 
 ## Installation
 
-
 ```sh
 npm install react-native-naver-login
 ```
 
-
 ## Usage
-
 
 ```js
 import { multiply } from 'react-native-naver-login';
@@ -20,7 +17,6 @@ import { multiply } from 'react-native-naver-login';
 
 const result = multiply(3, 7);
 ```
-
 
 ## Contributing
 
