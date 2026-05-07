@@ -9,6 +9,7 @@ const NOT_SUPPORTED = new Error(
 );
 
 const NaverLogin = {
+  // void return type cannot reject a Promise — throws synchronously instead.
   initialize(_params: NaverLoginInitParams): void {
     throw NOT_SUPPORTED;
   },
