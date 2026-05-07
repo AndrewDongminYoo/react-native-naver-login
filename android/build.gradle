@@ -62,6 +62,12 @@ android {
   }
 }
 
+repositories {
+  google()
+  mavenCentral()
+}
+
 dependencies {
   implementation "com.facebook.react:react-android"
+  implementation "com.navercorp.nid:oauth:5.10.0"
 }
