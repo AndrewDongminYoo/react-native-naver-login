@@ -1,3 +1,107 @@
-import { it } from '@jest/globals';
+import { describe, expect, it, jest, beforeEach } from '@jest/globals';
 
-it.todo('write a test');
+// jest.mock is hoisted by Babel before any import statements, so
+// NaverLogin.native.tsx will resolve NativeNaverLogin to these fakes.
+jest.mock('../NativeNaverLogin', () => ({
+  __esModule: true,
+  default: {
+    initialize: jest.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
+    deleteToken: jest.fn(),
+    getProfile: jest.fn(),
+  },
+}));
+
+import NaverLogin from '../NaverLogin.native';
+import NativeNaverLogin from '../NativeNaverLogin';
+
+const native = NativeNaverLogin as {
+  initialize: ReturnType<typeof jest.fn>;
+  login: ReturnType<typeof jest.fn>;
+  logout: ReturnType<typeof jest.fn>;
+  deleteToken: ReturnType<typeof jest.fn>;
+  getProfile: ReturnType<typeof jest.fn>;
+};
+
+describe('NaverLogin', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('initialize passes params to native module', () => {
+    const params = {
+      consumerKey: 'key',
+      consumerSecret: 'secret',
+      appName: 'TestApp',
+    };
+    NaverLogin.initialize(params);
+    expect(native.initialize).toHaveBeenCalledWith(params);
+  });
+
+  it('login calls native login and resolves with NaverLoginResponse', async () => {
+    const successResponse = {
+      isSuccess: true,
+      successResponse: {
+        accessToken: 'access',
+        refreshToken: 'refresh',
+        expiresAtUnixSecondString: '9999999999',
+        tokenType: 'Bearer',
+      },
+    };
+    native.login.mockResolvedValue(successResponse);
+
+    const result = await NaverLogin.login();
+    expect(native.login).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(successResponse);
+  });
+
+  it('login resolves with isSuccess false on failure', async () => {
+    const failureResponse = {
+      isSuccess: false,
+      failureResponse: { message: 'cancelled', isCancel: true },
+    };
+    native.login.mockResolvedValue(failureResponse);
+
+    const result = await NaverLogin.login();
+    expect(result.isSuccess).toBe(false);
+    expect(result.failureResponse?.isCancel).toBe(true);
+  });
+
+  it('logout calls native logout', async () => {
+    native.logout.mockResolvedValue(undefined);
+    await NaverLogin.logout();
+    expect(native.logout).toHaveBeenCalledTimes(1);
+  });
+
+  it('deleteToken calls native deleteToken', async () => {
+    native.deleteToken.mockResolvedValue(undefined);
+    await NaverLogin.deleteToken();
+    expect(native.deleteToken).toHaveBeenCalledTimes(1);
+  });
+
+  it('getProfile calls native getProfile with accessToken', async () => {
+    const profileResponse = {
+      resultcode: '00',
+      message: 'success',
+      response: {
+        id: '12345',
+        profile_image: null,
+        email: 'test@naver.com',
+        name: '홍길동',
+        birthday: null,
+        age: null,
+        birthyear: null,
+        gender: null,
+        mobile: null,
+        mobile_e164: null,
+        nickname: null,
+      },
+    };
+    native.getProfile.mockResolvedValue(profileResponse);
+
+    const result = await NaverLogin.getProfile('my-access-token');
+    expect(native.getProfile).toHaveBeenCalledWith('my-access-token');
+    expect(result.response.id).toBe('12345');
+  });
+});
