@@ -13,6 +13,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.atomic.AtomicBoolean
 
 class NaverLoginModule(
   reactContext: ReactApplicationContext,
@@ -22,6 +23,7 @@ class NaverLoginModule(
   }
 
   private val mainHandler = Handler(Looper.getMainLooper())
+  private val loginInProgress = AtomicBoolean(false)
 
   // -------------------------------------------------------------------------
   // initialize
@@ -39,8 +41,26 @@ class NaverLoginModule(
   // -------------------------------------------------------------------------
 
   override fun login(promise: Promise) {
+    if (!loginInProgress.compareAndSet(false, true)) {
+      val failureResponse =
+        WritableNativeMap().apply {
+          putString("message", "A login request is already in progress.")
+          putBoolean("isCancel", false)
+          putString("lastErrorCodeFromNaverSDK", "")
+          putString("lastErrorDescriptionFromNaverSDK", "")
+        }
+      promise.resolve(
+        WritableNativeMap().apply {
+          putBoolean("isSuccess", false)
+          putMap("failureResponse", failureResponse)
+        },
+      )
+      return
+    }
+
     val activity =
       currentActivity ?: run {
+        loginInProgress.set(false)
         val failureResponse =
           WritableNativeMap().apply {
             putString("message", "NaverLogin.login() called with no current Activity.")
@@ -60,6 +80,7 @@ class NaverLoginModule(
     val callback =
       object : OAuthLoginCallback {
         override fun onSuccess() {
+          loginInProgress.set(false)
           val successResponse =
             WritableNativeMap().apply {
               putString("accessToken", NaverIdLoginSDK.getAccessToken() ?: "")
@@ -79,6 +100,7 @@ class NaverLoginModule(
           httpStatus: Int,
           message: String,
         ) {
+          loginInProgress.set(false)
           val failureResponse =
             WritableNativeMap().apply {
               putString("message", message)
@@ -98,6 +120,7 @@ class NaverLoginModule(
           errorCode: Int,
           message: String,
         ) {
+          loginInProgress.set(false)
           // errorCode -1 is user cancellation in the Naver SDK.
           val isCancel = errorCode == -1
           val failureResponse =
@@ -169,14 +192,14 @@ class NaverLoginModule(
     promise: Promise,
   ) {
     Thread {
+      val connection =
+        (URL("https://openapi.naver.com/v1/nid/me").openConnection() as HttpURLConnection).also {
+          it.requestMethod = "GET"
+          it.setRequestProperty("Authorization", "Bearer $accessToken")
+          it.connectTimeout = 10_000
+          it.readTimeout = 10_000
+        }
       try {
-        val url = URL("https://openapi.naver.com/v1/nid/me")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "GET"
-        connection.setRequestProperty("Authorization", "Bearer $accessToken")
-        connection.connectTimeout = 10_000
-        connection.readTimeout = 10_000
-
         val responseCode = connection.responseCode
         if (responseCode != 200) {
           promise.reject("PROFILE_HTTP_ERROR", "HTTP $responseCode")
@@ -188,6 +211,8 @@ class NaverLoginModule(
         promise.resolve(jsonObjectToWritableMap(json))
       } catch (e: Exception) {
         promise.reject("PROFILE_ERROR", e.message ?: "Unknown error", e)
+      } finally {
+        connection.disconnect()
       }
     }.start()
   }

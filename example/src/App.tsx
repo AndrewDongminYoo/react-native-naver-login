@@ -63,9 +63,13 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    await NaverLogin.logout();
-    setState({ kind: 'idle' });
-    setProfile(null);
+    try {
+      await NaverLogin.logout();
+      setState({ kind: 'idle' });
+      setProfile(null);
+    } catch (e) {
+      Alert.alert('로그아웃 실패', String(e));
+    }
   };
 
   const handleDeleteToken = async () => {
