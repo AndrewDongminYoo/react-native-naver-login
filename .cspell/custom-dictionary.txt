@@ -1,6 +1,7 @@
 # Custom Dictionary Words
 codegen
 Dongmin
+dongminyu
 gifs
 gradlew
 naverlogin
