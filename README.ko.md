@@ -130,9 +130,9 @@ podspec이 `naveridlogin-sdk-ios` CocoaPod을 자동으로 가져옵니다. 별�
 </application>
 ```
 
-### Proguard
+### ProGuard
 
-Proguard를 사용하는 경우 다음 규칙을 추가합니다.
+ProGuard를 사용하는 경우 다음 규칙을 추가합니다.
 
 ```plaintext
 -keep class com.navercorp.nid.** { *; }
@@ -310,7 +310,7 @@ type NaverLoginFailureResponse = {
 
 ### `NaverLogin.logout()`
 
-반환값: `Promise<void>`
+반환값: `Promise<void>` — native 레이어에서 예외가 발생하면 reject될 수 있습니다.
 
 로컬에 저장된 토큰만 삭제합니다. 서버의 토큰은 여전히 유효합니다.
 
@@ -388,7 +388,7 @@ iOS와 Android 모두 동시에 두 번째 `login()` 요청이 들어오면 즉�
 | 로컬 토큰 삭제   | ✓             | ✓               |
 | 서버 토큰 무효화 | ✗             | ✓               |
 | 네트워크 필요    | ✗             | ✓               |
-| reject 가능      | ✗             | ✓               |
+| reject 가능      | ✓             | ✓               |
 | 사용 시나리오    | 단순 로그아웃 | 계정 연동 해제  |
 
 ### iOS AppDelegate 수정 불필요
@@ -519,7 +519,7 @@ keytool -exportcert -keystore ~/.android/debug.keystore \
 ### 변경되지 않은 사항
 
 - `initialize()`, `login()`, `logout()`, `deleteToken()`, `getProfile()` 시그니처 동일
-- `NaverLoginResponse`, `NaverLoginSuccessResponse`, `NaverLoginFailureResponse` 타입 동일
+- `NaverLoginResponse`, `NaverLoginSuccessResponse`, `NaverLoginFailureResponse`, `GetProfileResponse`, `NaverProfileData` 타입 동일
 - `login()`이 절대 reject하지 않는 계약 동일
 
 ---

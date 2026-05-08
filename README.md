@@ -310,7 +310,7 @@ type NaverLoginFailureResponse = {
 
 ### `NaverLogin.logout()`
 
-Returns: `Promise<void>`
+Returns: `Promise<void>` — can reject if the native layer throws.
 
 Removes the locally cached token. The token remains valid on the server.
 
@@ -388,7 +388,7 @@ On both iOS and Android, if a second `login()` call arrives while one is already
 | Removes local token  | ✓               | ✓                   |
 | Revokes server token | ✗               | ✓                   |
 | Requires network     | ✗               | ✓                   |
-| Can reject           | ✗               | ✓                   |
+| Can reject           | ✓               | ✓                   |
 | Use case             | Simple sign-out | Full account unlink |
 
 ### No AppDelegate changes needed (iOS)
@@ -521,7 +521,7 @@ Paste the output into the Android app registration field labeled "SHA-1 fingerpr
 ### What stayed the same
 
 - `initialize()`, `login()`, `logout()`, `deleteToken()`, `getProfile()` signatures are identical
-- `NaverLoginResponse`, `NaverLoginSuccessResponse`, `NaverLoginFailureResponse` types are identical
+- `NaverLoginResponse`, `NaverLoginSuccessResponse`, `NaverLoginFailureResponse`, `GetProfileResponse`, `NaverProfileData` types are identical
 - The `login()` never-rejects contract is preserved
 
 ---
