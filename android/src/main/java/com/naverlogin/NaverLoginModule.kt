@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableNativeMap
 import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -59,7 +60,7 @@ class NaverLoginModule(
     }
 
     val activity =
-      currentActivity ?: run {
+      reactApplicationContext.getCurrentActivity() ?: run {
         loginInProgress.set(false)
         val failureResponse =
           WritableNativeMap().apply {
@@ -180,7 +181,9 @@ class NaverLoginModule(
         }
       }
     // Revoke server-side first; clear local state (logout) only after server confirms.
-    NaverIdLoginSDK.callDeleteTokenApi(reactApplicationContext, callback)
+    // In SDK v5.x, callDeleteTokenApi lives on NidOAuthLogin (not NaverIdLoginSDK)
+    // and reads the application context from the SDK's init() state, so no context arg.
+    NidOAuthLogin().callDeleteTokenApi(callback)
   }
 
   // -------------------------------------------------------------------------
