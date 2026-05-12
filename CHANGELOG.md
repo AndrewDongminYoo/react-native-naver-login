@@ -7,6 +7,16 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-12
+
+### Fixed
+
+- Android `deleteToken()` failed to compile against `com.navercorp.nid:oauth` 5.x because `callDeleteTokenApi` was called on `NaverIdLoginSDK` with a `Context` argument. In SDK 5.x the method lives on `NidOAuthLogin` and takes only the callback; switched to `NidOAuthLogin().callDeleteTokenApi(callback)`.
+
+### Changed
+
+- Replaced the deprecated `currentActivity` synthetic property access in `NaverLoginModule.kt` with the explicit `reactApplicationContext.getCurrentActivity()` call recommended in React Native 0.80+.
+
 ## [0.1.1] - 2026-05-08
 
 ### Added
@@ -46,6 +56,7 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 - Trunk linter suite (ESLint, ktlint, Prettier, shellcheck, markdownlint, yamllint, actionlint, cspell)
 - Design spec and implementation plan under `docs/specs/` and `docs/plans/`
 
-[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/AndrewDongminYoo/react-native-naver-login/releases/tag/v0.1.0
