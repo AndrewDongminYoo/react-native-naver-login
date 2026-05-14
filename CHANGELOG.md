@@ -7,6 +7,12 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-05-14
+
+### Added
+
+- `NaverProfileData.ci` (optional `string | null`): exposes the Connecting Information returned by Naver's `/v1/nid/me` endpoint when the Naver application has business-info registration and the CI scope is granted. Native code already passes the field through; this release types it on the JS side so callers can read `profile.response.ci` without a cast.
+
 ## [0.1.2] - 2026-05-12
 
 ### Fixed
@@ -56,7 +62,8 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 - Trunk linter suite (ESLint, ktlint, Prettier, shellcheck, markdownlint, yamllint, actionlint, cspell)
 - Design spec and implementation plan under `docs/specs/` and `docs/plans/`
 
-[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/AndrewDongminYoo/react-native-naver-login/releases/tag/v0.1.0

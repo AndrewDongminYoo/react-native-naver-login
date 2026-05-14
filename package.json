@@ -1,6 +1,6 @@
 {
   "name": "@dongminyu/react-native-naver-login",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "React Native TurboModule for Naver OAuth (네이버 아이디로 로그인) on iOS and Android, targeting the New Architecture.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
