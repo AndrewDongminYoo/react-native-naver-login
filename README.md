@@ -351,6 +351,7 @@ type NaverProfileData = {
   gender: string | null; // "M" | "F" | "U"
   mobile: string | null;
   mobile_e164: string | null;
+  ci?: string | null; // CI (Connecting Information); only present if the Naver app has business-info + CI scope
 };
 ```
 

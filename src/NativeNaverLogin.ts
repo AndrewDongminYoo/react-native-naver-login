@@ -47,6 +47,8 @@ export type NaverProfileData = {
   mobile: string | null;
   mobile_e164: string | null;
   nickname: string | null;
+  // Present only when the Naver app has business-info + CI scope; key may be absent.
+  ci?: string | null;
 };
 
 export type GetProfileResponse = {

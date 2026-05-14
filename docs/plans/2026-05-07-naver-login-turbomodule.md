@@ -97,6 +97,7 @@ export type NaverProfileData = {
   mobile: string | null;
   mobile_e164: string | null;
   nickname: string | null;
+  ci?: string | null; // present only with business-info + CI scope
 };
 
 export type GetProfileResponse = {

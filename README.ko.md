@@ -351,6 +351,7 @@ type NaverProfileData = {
   gender: string | null; // "M" | "F" | "U"
   mobile: string | null;
   mobile_e164: string | null;
+  ci?: string | null; // CI (본인확인 연계정보); 비즈니스 정보 등록 + CI 정보 권한이 있어야 응답에 포함됨
 };
 ```
 

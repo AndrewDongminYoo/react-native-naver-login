@@ -40,7 +40,8 @@ failureResponse?: { message, isCancel, lastErrorCodeFromNaverSDK?, lastErrorDesc
 resultcode: string
 message: string
 response: { id, profile_image|null, email, name, birthday|null, age|null,
-            birthyear|null, gender|null, mobile|null, mobile_e164|null, nickname|null }
+            birthyear|null, gender|null, mobile|null, mobile_e164|null, nickname|null,
+            ci?|null }  // ci only present with business-info + CI scope
 
 NaverLogin.initialize(params): void
 NaverLogin.login(): Promise<NaverLoginResponse>
