@@ -89,13 +89,7 @@ yarn test
 
 ### Publishing to npm
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
+Releases are managed manually via the Claude Code `/release` skill. The skill bumps `package.json` version, updates `CHANGELOG.md`, runs typecheck + lint + tests, commits with `chore(release): 🔖 vX.Y.Z`, and pushes a git tag.
 
 ### Scripts
 

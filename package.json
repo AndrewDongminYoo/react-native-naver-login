@@ -37,7 +37,6 @@
     "prepare": "bob build",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "release": "release-it --only-version",
     "web": "vite",
     "build:web": "vite build",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -79,7 +78,6 @@
     "@react-native/babel-preset": "0.85.2",
     "@react-native/eslint-config": "0.85.2",
     "@react-native/jest-preset": "0.85.2",
-    "@release-it/conventional-changelog": "^11.0.0",
     "@types/react": "^19.2.0",
     "del-cli": "^7.0.0",
     "eslint": "^9.39.4",
@@ -90,7 +88,6 @@
     "react": "19.2.3",
     "react-native": "0.85.2",
     "react-native-builder-bob": "^0.41.0",
-    "release-it": "^20.0.1",
     "turbo": "^2.9.8",
     "typescript": "^6.0.3"
   },
@@ -116,7 +113,6 @@
     "tools": [
       "eslint",
       "jest",
-      "release-it",
       "vite"
     ],
     "version": "0.62.0"
