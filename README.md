@@ -557,4 +557,4 @@ The request failed due to a network error or the token was already expired. If y
 
 ## License
 
-MIT © [Dongmin Yu](https://github.com/AndrewDongminYuu)
+MIT © [Dongmin Yu](https://github.com/AndrewDongminYoo)

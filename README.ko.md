@@ -555,4 +555,4 @@ cd ios && pod install --repo-update
 
 ## 라이선스
 
-MIT © [Dongmin Yu](https://github.com/AndrewDongminYuu)
+MIT © [Dongmin Yu](https://github.com/AndrewDongminYoo)
