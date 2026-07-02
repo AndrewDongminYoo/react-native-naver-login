@@ -7,6 +7,18 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-07-02
+
+### Fixed
+
+- Corrected the GitHub repository URL in `NaverLogin.podspec` so CocoaPods and the npm "repository" link resolve to the right project.
+- Corrected the author's GitHub username (`AndrewDongminYuu` → `AndrewDongminYoo`) in `README.md`, `README.ko.md`, and the TurboModule implementation plan.
+
+### Changed
+
+- Replaced `release-it` with the skill-based release workflow.
+- Bumped Trunk plugin versions and pinned linter tool dependencies.
+
 ## [0.1.3] - 2026-05-14
 
 ### Added
@@ -62,7 +74,8 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 - Trunk linter suite (ESLint, ktlint, Prettier, shellcheck, markdownlint, yamllint, actionlint, cspell)
 - Design spec and implementation plan under `docs/specs/` and `docs/plans/`
 
-[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/AndrewDongminYoo/react-native-naver-login/compare/v0.1.0...v0.1.1
