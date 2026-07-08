@@ -4,7 +4,7 @@ PODS:
     - hermes-engine/Pre-built (= 250829098.0.10)
   - hermes-engine/Pre-built (250829098.0.10)
   - naveridlogin-sdk-ios (4.2.3)
-  - NaverLogin (0.1.4):
+  - NaverLogin (0.1.5):
     - hermes-engine
     - naveridlogin-sdk-ios
     - RCTRequired
@@ -2009,7 +2009,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 26fd21c75314e101f280d401e97f27d54f3f7064
   hermes-engine: b3f702e9819cae4d2ef6c33f262c2fe3e9b54f75
   naveridlogin-sdk-ios: d9d46d02119d303023d7000cd5963864d5bb89e5
-  NaverLogin: 545fbc8464360acf2ba3141e798c3484c12aeedd
+  NaverLogin: 05a5b780e116765c70e85c593ec7f5ef087629c3
   RCTDeprecation: c7a2768f905d76ca6d2cfefb26e4349eacbdfca3
   RCTRequired: 5e502c3553cfbed090a991c444448da452fb752e
   RCTSwiftUI: 5ce3ccbdc58b78cc4ebbaace01709ec22d58e131

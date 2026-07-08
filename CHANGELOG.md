@@ -7,6 +7,8 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-07-09
+
 ### Added
 
 - `NaverLogin.refreshToken()`: reissues the access token using the SDK-stored refresh token, resolving with the same `NaverLoginResponse` shape as `login()` (never rejects — an expired refresh token resolves as `{ isSuccess: false }`). Backed by `requestAccessTokenWithRefreshToken` (iOS) and `NidOAuthLogin().callRefreshAccessTokenApi` (Android). This method is additive beyond the `@react-native-seoul/naver-login` API surface.
