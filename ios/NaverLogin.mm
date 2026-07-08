@@ -88,7 +88,13 @@
 - (void)login:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
     if (self.loginResolve != nil) {
-        reject(@"LOGIN_IN_PROGRESS", @"A login request is already in progress.", nil);
+        resolve(@{
+            @"isSuccess": @NO,
+            @"failureResponse": @{
+                @"message": @"A login request is already in progress.",
+                @"isCancel": @NO,
+            }
+        });
         return;
     }
 
@@ -110,7 +116,13 @@
 - (void)refreshToken:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
 {
     if (self.refreshResolve != nil) {
-        reject(@"REFRESH_IN_PROGRESS", @"A refreshToken request is already in progress.", nil);
+        resolve(@{
+            @"isSuccess": @NO,
+            @"failureResponse": @{
+                @"message": @"A refreshToken request is already in progress.",
+                @"isCancel": @NO,
+            }
+        });
         return;
     }
 
