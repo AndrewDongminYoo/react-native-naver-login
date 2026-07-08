@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "@dongminyu/react-native-naver-login": ["./src/index"]
+      "react-native-naver-login-turbo": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

@@ -11,7 +11,7 @@ import {
 import NaverLogin, {
   type GetProfileResponse,
   type NaverLoginSuccessResponse,
-} from '@dongminyu/react-native-naver-login';
+} from 'react-native-naver-login-turbo';
 
 const CLIENT_ID = 'YOUR_CLIENT_ID';
 const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';

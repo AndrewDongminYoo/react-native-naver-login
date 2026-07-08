@@ -1,7 +1,7 @@
-# @dongminyu/react-native-naver-login
+# react-native-naver-login-turbo
 
-[![npm version](https://img.shields.io/npm/v/@dongminyu/react-native-naver-login)](https://www.npmjs.com/package/@dongminyu/react-native-naver-login)
-[![license](https://img.shields.io/npm/l/@dongminyu/react-native-naver-login)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/react-native-naver-login-turbo)](https://www.npmjs.com/package/react-native-naver-login-turbo)
+[![license](https://img.shields.io/npm/l/react-native-naver-login-turbo)](./LICENSE)
 [![platform - ios](https://img.shields.io/badge/platform-iOS%2015.1%2B-blue?logo=apple)](https://developer.apple.com)
 [![platform - android](https://img.shields.io/badge/platform-Android%2024%2B-green?logo=android)](https://developer.android.com)
 [![new architecture](https://img.shields.io/badge/New%20Architecture-TurboModule-orange)](https://reactnative.dev/docs/the-new-architecture/landing-page)
@@ -60,9 +60,9 @@ React Native **New Architecture(TurboModule)** 기반의 네이버 OAuth 2.0 로
 ## 설치
 
 ```sh
-npm install @dongminyu/react-native-naver-login
+npm install react-native-naver-login-turbo
 # 또는
-yarn add @dongminyu/react-native-naver-login
+yarn add react-native-naver-login-turbo
 ```
 
 ### iOS
@@ -147,7 +147,7 @@ ProGuard를 사용하는 경우 다음 규칙을 추가합니다.
 앱 시작 시 한 번만 호출합니다. 일반적으로 루트 컴포넌트의 `useEffect` 내에서 호출합니다.
 
 ```typescript
-import NaverLogin from '@dongminyu/react-native-naver-login';
+import NaverLogin from 'react-native-naver-login-turbo';
 
 NaverLogin.initialize({
   consumerKey: 'YOUR_CLIENT_ID',
@@ -221,7 +221,7 @@ import { useEffect, useState } from 'react';
 import { Button, Text, View } from 'react-native';
 import NaverLogin, {
   type NaverLoginSuccessResponse,
-} from '@dongminyu/react-native-naver-login';
+} from 'react-native-naver-login-turbo';
 
 export default function LoginScreen() {
   const [token, setToken] = useState<NaverLoginSuccessResponse | null>(null);
