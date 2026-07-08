@@ -18,6 +18,10 @@ const NaverLogin = {
     return Promise.reject(NOT_SUPPORTED);
   },
 
+  refreshToken(): Promise<NaverLoginResponse> {
+    return Promise.reject(NOT_SUPPORTED);
+  },
+
   logout(): Promise<void> {
     return Promise.reject(NOT_SUPPORTED);
   },

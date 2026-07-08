@@ -64,6 +64,7 @@ export type GetProfileResponse = {
 export interface Spec extends TurboModule {
   initialize(params: NaverLoginInitParams): void;
   login(): Promise<Object>;
+  refreshToken(): Promise<Object>;
   logout(): Promise<void>;
   deleteToken(): Promise<void>;
   getProfile(accessToken: string): Promise<Object>;

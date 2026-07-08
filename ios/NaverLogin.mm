@@ -9,6 +9,9 @@
 // Stored while a login() Promise is in flight. nil when idle.
 @property (nonatomic, copy, nullable) RCTPromiseResolveBlock loginResolve;
 @property (nonatomic, copy, nullable) RCTPromiseRejectBlock loginReject;
+// Stored while a refreshToken() Promise is in flight. nil when idle.
+@property (nonatomic, copy, nullable) RCTPromiseResolveBlock refreshResolve;
+@property (nonatomic, copy, nullable) RCTPromiseRejectBlock refreshReject;
 // Stored while a deleteToken() Promise is in flight. nil when idle.
 @property (nonatomic, copy, nullable) RCTPromiseResolveBlock deleteTokenResolve;
 @property (nonatomic, copy, nullable) RCTPromiseRejectBlock deleteTokenReject;
@@ -101,6 +104,28 @@
 }
 
 // -------------------------------------------------------------------------
+// refreshToken — reissue the access token using the stored refresh token
+// -------------------------------------------------------------------------
+
+- (void)refreshToken:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
+{
+    if (self.refreshResolve != nil) {
+        reject(@"REFRESH_IN_PROGRESS", @"A refreshToken request is already in progress.", nil);
+        return;
+    }
+
+    self.refreshResolve = resolve;
+    self.refreshReject  = reject;
+
+    NaverThirdPartyLoginConnection *conn = [NaverThirdPartyLoginConnection getSharedInstance];
+    conn.delegate = self;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [conn requestAccessTokenWithRefreshToken];
+    });
+}
+
+// -------------------------------------------------------------------------
 // logout — clears local tokens only (no server revocation)
 // -------------------------------------------------------------------------
 
@@ -180,7 +205,18 @@
 
 - (void)oauth20ConnectionDidFinishRequestACTokenWithRefreshToken
 {
-    [self resolveLoginWithConnection:[NaverThirdPartyLoginConnection getSharedInstance]];
+    NaverThirdPartyLoginConnection *conn = [NaverThirdPartyLoginConnection getSharedInstance];
+
+    // An explicit refreshToken() call takes priority over the login path: the
+    // same delegate fires for both, so route by which Promise is pending.
+    if (self.refreshResolve) {
+        self.refreshResolve([self successResultForConnection:conn]);
+        self.refreshResolve = nil;
+        self.refreshReject  = nil;
+        return;
+    }
+
+    [self resolveLoginWithConnection:conn];
 }
 
 - (void)oauth20ConnectionDidFinishDeleteToken
@@ -211,6 +247,21 @@
         self.loginResolve(result);
         self.loginResolve = nil;
         self.loginReject  = nil;
+    } else if (self.refreshResolve) {
+        // refreshToken() mirrors login(): failures resolve as { isSuccess: NO },
+        // they do not reject. Lets callers treat an expired refresh token as a
+        // signal to re-login rather than an exception.
+        BOOL isCancel = (error.code == CANCELBYUSER);
+        NSDictionary *result = @{
+            @"isSuccess": @NO,
+            @"failureResponse": @{
+                @"message": error.localizedDescription ?: @"Unknown error",
+                @"isCancel": @(isCancel),
+            }
+        };
+        self.refreshResolve(result);
+        self.refreshResolve = nil;
+        self.refreshReject  = nil;
     } else if (self.deleteTokenReject) {
         self.deleteTokenReject(@"DELETE_TOKEN_FAILED",
                                error.localizedDescription ?: @"Unknown error",
@@ -243,14 +294,14 @@
 // Private helpers
 // -------------------------------------------------------------------------
 
-- (void)resolveLoginWithConnection:(NaverThirdPartyLoginConnection *)conn
+- (NSDictionary *)successResultForConnection:(NaverThirdPartyLoginConnection *)conn
 {
     NSString *expiresAt = conn.accessTokenExpireDate
         ? [NSString stringWithFormat:@"%.0f",
            [conn.accessTokenExpireDate timeIntervalSince1970]]
         : @"";
 
-    NSDictionary *result = @{
+    return @{
         @"isSuccess": @YES,
         @"successResponse": @{
             @"accessToken":              conn.accessToken  ?: @"",
@@ -259,9 +310,12 @@
             @"tokenType":                conn.tokenType    ?: @"",
         }
     };
+}
 
+- (void)resolveLoginWithConnection:(NaverThirdPartyLoginConnection *)conn
+{
     if (self.loginResolve) {
-        self.loginResolve(result);
+        self.loginResolve([self successResultForConnection:conn]);
         self.loginResolve = nil;
         self.loginReject  = nil;
     }

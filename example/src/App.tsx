@@ -62,6 +62,19 @@ export default function App() {
     }
   };
 
+  const handleRefreshToken = async () => {
+    const result = await NaverLogin.refreshToken();
+    if (result.isSuccess && result.successResponse) {
+      setState({ kind: 'loggedIn', token: result.successResponse });
+      Alert.alert('토큰 갱신 성공', '새 access token을 발급받았습니다.');
+    } else {
+      Alert.alert(
+        '토큰 갱신 실패',
+        result.failureResponse?.message ?? '다시 로그인해 주세요.'
+      );
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await NaverLogin.logout();
@@ -130,6 +143,10 @@ export default function App() {
               <Text style={styles.value}>{profile.nickname ?? '-'}</Text>
             </View>
           )}
+
+          <TouchableOpacity style={styles.button} onPress={handleRefreshToken}>
+            <Text style={styles.buttonText}>토큰 갱신</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.button, styles.logoutButton]}

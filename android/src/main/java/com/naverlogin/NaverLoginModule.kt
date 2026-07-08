@@ -146,6 +146,68 @@ class NaverLoginModule(
   }
 
   // -------------------------------------------------------------------------
+  // refreshToken — reissue the access token using the stored refresh token
+  // -------------------------------------------------------------------------
+
+  override fun refreshToken(promise: Promise) {
+    val callback =
+      object : OAuthLoginCallback {
+        override fun onSuccess() {
+          val successResponse =
+            WritableNativeMap().apply {
+              putString("accessToken", NaverIdLoginSDK.getAccessToken() ?: "")
+              putString("refreshToken", NaverIdLoginSDK.getRefreshToken() ?: "")
+              putString("expiresAtUnixSecondString", NaverIdLoginSDK.getExpiresAt().toString())
+              putString("tokenType", NaverIdLoginSDK.getTokenType() ?: "Bearer")
+            }
+          promise.resolve(
+            WritableNativeMap().apply {
+              putBoolean("isSuccess", true)
+              putMap("successResponse", successResponse)
+            },
+          )
+        }
+
+        // refreshToken() mirrors login(): failures resolve as { isSuccess: false },
+        // they do not reject. An expired refresh token is a re-login signal, not an error.
+        override fun onFailure(
+          httpStatus: Int,
+          message: String,
+        ) {
+          promise.resolve(buildRefreshFailure(message, isCancel = false))
+        }
+
+        override fun onError(
+          errorCode: Int,
+          message: String,
+        ) {
+          promise.resolve(buildRefreshFailure(message, isCancel = errorCode == -1))
+        }
+      }
+
+    mainHandler.post {
+      NidOAuthLogin().callRefreshAccessTokenApi(callback)
+    }
+  }
+
+  private fun buildRefreshFailure(
+    message: String,
+    isCancel: Boolean,
+  ): WritableNativeMap {
+    val failureResponse =
+      WritableNativeMap().apply {
+        putString("message", message)
+        putBoolean("isCancel", isCancel)
+        putString("lastErrorCodeFromNaverSDK", NaverIdLoginSDK.getLastErrorCode().code)
+        putString("lastErrorDescriptionFromNaverSDK", NaverIdLoginSDK.getLastErrorDescription() ?: "")
+      }
+    return WritableNativeMap().apply {
+      putBoolean("isSuccess", false)
+      putMap("failureResponse", failureResponse)
+    }
+  }
+
+  // -------------------------------------------------------------------------
   // logout
   // -------------------------------------------------------------------------
 

@@ -308,6 +308,30 @@ type NaverLoginFailureResponse = {
 
 ---
 
+### `NaverLogin.refreshToken()`
+
+반환값: `Promise<NaverLoginResponse>` — **절대 reject되지 않습니다** (`login()`과 동일한 계약).
+
+로그인 이후 SDK가 저장해 둔 refresh token으로 access token을 재발급합니다.
+네이버 access token은 1시간 후 만료되므로, 사용자에게 다시 로그인을 요구하지 않고 새 `accessToken`을 얻을 때 호출합니다.
+
+성공하면 새 `successResponse` 토큰 번들(`login()`과 동일한 형태)로 resolve됩니다.
+refresh token이 없거나 만료된 경우 `{ isSuccess: false, failureResponse: {...} }`로 resolve되며, 이때는 `login()`을 다시 실행하라는 신호로 처리하면 됩니다.
+
+```typescript
+const result = await NaverLogin.refreshToken();
+if (result.isSuccess) {
+  const { accessToken, expiresAtUnixSecondString } = result.successResponse!;
+} else {
+  // refresh token 만료 — 전체 로그인으로 폴백
+  await NaverLogin.login();
+}
+```
+
+> 내부적으로 `requestAccessTokenWithRefreshToken`(iOS) / `NidOAuthLogin().callRefreshAccessTokenApi`(Android)를 사용합니다. 이 메서드는 **추가 기능**으로, `@react-native-seoul/naver-login`에는 존재하지 않습니다.
+
+---
+
 ### `NaverLogin.logout()`
 
 반환값: `Promise<void>` — native 레이어에서 예외가 발생하면 reject될 수 있습니다.

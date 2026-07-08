@@ -7,6 +7,7 @@ jest.mock('../NativeNaverLogin', () => ({
   default: {
     initialize: jest.fn(),
     login: jest.fn(),
+    refreshToken: jest.fn(),
     logout: jest.fn(),
     deleteToken: jest.fn(),
     getProfile: jest.fn(),
@@ -19,6 +20,7 @@ import NativeNaverLogin from '../NativeNaverLogin';
 const native = NativeNaverLogin as {
   initialize: ReturnType<typeof jest.fn>;
   login: ReturnType<typeof jest.fn>;
+  refreshToken: ReturnType<typeof jest.fn>;
   logout: ReturnType<typeof jest.fn>;
   deleteToken: ReturnType<typeof jest.fn>;
   getProfile: ReturnType<typeof jest.fn>;
@@ -84,6 +86,39 @@ describe('NaverLogin', () => {
     expect(result.failureResponse?.lastErrorCodeFromNaverSDK).toBe(
       'NETWORK_ERROR'
     );
+  });
+
+  it('refreshToken calls native refreshToken and resolves with new tokens', async () => {
+    const refreshed = {
+      isSuccess: true,
+      successResponse: {
+        accessToken: 'new-access',
+        refreshToken: 'refresh',
+        expiresAtUnixSecondString: '9999999999',
+        tokenType: 'Bearer',
+      },
+    };
+    native.refreshToken.mockResolvedValue(refreshed);
+
+    const result = await NaverLogin.refreshToken();
+    expect(native.refreshToken).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(refreshed);
+  });
+
+  it('refreshToken resolves with isSuccess false when the refresh token is invalid', async () => {
+    native.refreshToken.mockResolvedValue({
+      isSuccess: false,
+      failureResponse: {
+        message: 'invalid refresh token',
+        isCancel: false,
+        lastErrorCodeFromNaverSDK: 'INVALID_REFRESH_TOKEN',
+        lastErrorDescriptionFromNaverSDK: 'Refresh token expired',
+      },
+    });
+
+    const result = await NaverLogin.refreshToken();
+    expect(result.isSuccess).toBe(false);
+    expect(result.failureResponse?.isCancel).toBe(false);
   });
 
   it('logout calls native logout', async () => {

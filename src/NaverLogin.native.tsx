@@ -14,6 +14,10 @@ const NaverLogin = {
     return NativeNaverLogin.login() as Promise<NaverLoginResponse>;
   },
 
+  refreshToken(): Promise<NaverLoginResponse> {
+    return NativeNaverLogin.refreshToken() as Promise<NaverLoginResponse>;
+  },
+
   logout(): Promise<void> {
     return NativeNaverLogin.logout();
   },
