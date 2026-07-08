@@ -5,7 +5,7 @@
 
 ## Goal
 
-Replace the `multiply` scaffold placeholder with a complete Naver OAuth 2.0 authentication TurboModule. The public API matches `@react-native-seoul/naver-login` (minus `getAgreement`, which is deprecated) to allow drop-in migration.
+Replace the `multiply` scaffold placeholder with a complete Naver OAuth 2.0 authentication TurboModule. The public API matches `@react-native-seoul/naver-login` (minus `getAgreement`, deliberately not ported — see Scope) to allow drop-in migration.
 
 ## Scope
 
@@ -17,7 +17,7 @@ Replace the `multiply` scaffold placeholder with a complete Naver OAuth 2.0 auth
 
 **Out of scope:**
 
-- `getAgreement` (deprecated upstream)
+- `getAgreement` — deliberately not ported. It is **not** deprecated (`GET https://openapi.naver.com/v1/nid/agreement` is still live and documented, and upstream still ships it), but it is a niche "약관 동의 대행" (consent-delegation) feature and a plain REST call that never touches native code. Wrapping a bare `fetch` adds little value; apps that need it can call the endpoint directly with their own API client. (An earlier draft mislabelled it "deprecated" — that was unsourced and incorrect.)
 - Web implementation (throws not-supported error)
 - React Navigation / deep-link wiring (host app responsibility)
 

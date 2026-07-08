@@ -536,12 +536,14 @@ Paste the output into the Android app registration field labeled "SHA-1 fingerpr
 
 ### What changed
 
-| Item                  | Before (`@react-native-seoul`) | This library                       |
-| --------------------- | ------------------------------ | ---------------------------------- |
-| Architecture          | Old Bridge                     | New Architecture (TurboModule)     |
-| `getAgreement`        | Supported                      | **Removed** (Naver API deprecated) |
-| AppDelegate setup     | Required                       | **Not required**                   |
-| iOS `openURL` handler | Added in AppDelegate           | Handled internally by the library  |
+| Item                  | Before (`@react-native-seoul`) | This library                      |
+| --------------------- | ------------------------------ | --------------------------------- |
+| Architecture          | Old Bridge                     | New Architecture (TurboModule)    |
+| `getAgreement`        | Supported                      | **Not ported** (see note below)   |
+| AppDelegate setup     | Required                       | **Not required**                  |
+| iOS `openURL` handler | Added in AppDelegate           | Handled internally by the library |
+
+> **Note on `getAgreement`.** It is **not** deprecated — `GET https://openapi.naver.com/v1/nid/agreement` is still live and documented, and the upstream package still ships it. It is a niche feature usable only by apps enrolled in Naver's "약관 동의 대행" (consent-delegation) program, and it is a plain REST call that never touches native code. We deliberately left it out because wrapping a bare `fetch` in this library adds little value: an app that needs it can call the endpoint directly with its own API client (same `Authorization: Bearer <accessToken>` header used by `getProfile`). An earlier version of this table incorrectly labelled it "deprecated"; that claim was unsourced and is wrong.
 
 ### What stayed the same
 

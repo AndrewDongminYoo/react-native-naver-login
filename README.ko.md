@@ -534,12 +534,14 @@ keytool -exportcert -keystore ~/.android/debug.keystore \
 
 ### 변경된 사항
 
-| 항목               | 이전 (`@react-native-seoul`) | 이 라이브러리                      |
-| ------------------ | ---------------------------- | ---------------------------------- |
-| 아키텍처           | Old Bridge                   | New Architecture (TurboModule)     |
-| `getAgreement`     | 지원                         | **제거됨** (네이버 API deprecated) |
-| AppDelegate 설정   | 필요                         | **불필요**                         |
-| iOS openURL 핸들러 | AppDelegate에 추가           | 라이브러리 내부 처리               |
+| 항목               | 이전 (`@react-native-seoul`) | 이 라이브러리                  |
+| ------------------ | ---------------------------- | ------------------------------ |
+| 아키텍처           | Old Bridge                   | New Architecture (TurboModule) |
+| `getAgreement`     | 지원                         | **미포함** (아래 노트 참고)    |
+| AppDelegate 설정   | 필요                         | **불필요**                     |
+| iOS openURL 핸들러 | AppDelegate에 추가           | 라이브러리 내부 처리           |
+
+> **`getAgreement` 관련 노트.** deprecated가 **아닙니다** — `GET https://openapi.naver.com/v1/nid/agreement`는 여전히 살아있고 문서화되어 있으며, 상류 패키지도 계속 제공합니다. 이 기능은 네이버 "약관 동의 대행" 프로그램에 등록한 앱만 사용할 수 있는 니치 기능이고, 네이티브 코드를 전혀 거치지 않는 순수 REST 호출입니다. 단순 `fetch`를 라이브러리로 감싸는 이득이 작아 **의도적으로 제외**했습니다 — 필요한 앱은 `getProfile`과 동일한 `Authorization: Bearer <accessToken>` 헤더로 보유한 API 클라이언트에서 엔드포인트를 직접 호출하면 됩니다. 이전 버전 표에서 이를 "deprecated"로 표기했으나, 이는 출처 없는 잘못된 서술이었습니다.
 
 ### 변경되지 않은 사항
 
