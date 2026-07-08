@@ -561,6 +561,15 @@ Paste the output into the Android app registration field labeled "SHA-1 fingerpr
 cd ios && pod install --repo-update
 ```
 
+### iOS build error: missing `ReactCodegen` generated files
+
+If Xcode reports missing files under `ios/build/generated/ios/ReactCodegen` after `pod install`, check `ios/.xcode.env.local`. React Native sources `.xcode.env.local` after `.xcode.env`, so a stale hard-coded `NODE_BINARY` path can prevent the Codegen script phase from running with the Node version you expect. Delete `ios/.xcode.env.local` or regenerate it from the active shell:
+
+```sh
+cd ios
+echo 'export NODE_BINARY="$(command -v node)"' > .xcode.env.local
+```
+
 ### iOS: app does not return after login
 
 1. Verify that the URL Scheme in `Info.plist` matches the `serviceUrlSchemeIOS` value passed to `initialize()`.
@@ -569,7 +578,7 @@ cd ios && pod install --repo-update
 
 ### Android build error: Manifest merger conflict
 
-Check whether `OAuthLoginActivity` is declared twice in `AndroidManifest.xml`. The library declares it internally, so you should not add it manually.
+Check whether `OAuthLoginActivity` is declared more than once. The current library manifest is empty, so your app should declare `OAuthLoginActivity` exactly once in the app's `AndroidManifest.xml`.
 
 ### Android: `login()` immediately returns `isSuccess: false`
 

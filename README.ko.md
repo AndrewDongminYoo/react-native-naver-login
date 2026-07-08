@@ -559,6 +559,15 @@ keytool -exportcert -keystore ~/.android/debug.keystore \
 cd ios && pod install --repo-update
 ```
 
+### iOS 빌드 오류: `ReactCodegen` 생성 파일 없음
+
+`pod install` 이후에도 Xcode가 `ios/build/generated/ios/ReactCodegen` 아래 파일을 찾지 못한다면 `ios/.xcode.env.local`을 확인하세요. React Native는 `.xcode.env`를 읽은 뒤 `.xcode.env.local`을 다시 source하므로, 여기에 오래된 `NODE_BINARY` 절대 경로가 있으면 Codegen script phase가 기대한 Node로 실행되지 않을 수 있습니다. `ios/.xcode.env.local`을 삭제하거나 현재 셸 기준으로 다시 생성하세요.
+
+```sh
+cd ios
+echo 'export NODE_BINARY="$(command -v node)"' > .xcode.env.local
+```
+
 ### iOS: 로그인 후 앱으로 돌아오지 않음
 
 1. `Info.plist`의 URL Scheme이 `initialize()`의 `serviceUrlSchemeIOS`와 동일한지 확인합니다.
@@ -567,7 +576,7 @@ cd ios && pod install --repo-update
 
 ### Android 빌드 오류: Manifest merger 충돌
 
-`AndroidManifest.xml`에 `OAuthLoginActivity`가 중복 선언되어 있는지 확인합니다. 라이브러리가 내부적으로 선언하므로 직접 추가할 필요가 없습니다.
+`OAuthLoginActivity`가 두 번 이상 선언되어 있는지 확인합니다. 현재 라이브러리 Manifest는 비어 있으므로 앱의 `AndroidManifest.xml`에 `OAuthLoginActivity`를 정확히 한 번 선언해야 합니다.
 
 ### Android: `login()`이 즉시 `isSuccess: false` 반환
 

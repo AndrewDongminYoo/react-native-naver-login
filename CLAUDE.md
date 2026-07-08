@@ -28,16 +28,17 @@ trunk fmt            # auto-format via Trunk
 
 # Run unit tests
 yarn test
-yarn test --testPathPattern=src/__tests__/index.test.tsx  # single file
+yarn test --testPathPatterns=src/__tests__/index.test.tsx  # single file
 
 # Run the example app
 yarn example start              # Metro bundler
 yarn example android            # Android (requires ANDROID_HOME)
-yarn example ios                # iOS (requires Xcode + CocoaPods)
+yarn example ios                # iOS Simulator (requires Xcode + CocoaPods)
 yarn example web                # Vite dev server
 
 # Release
-yarn release                    # bumps version, tags, publishes via release-it
+# No release-it/yarn release script exists. Use the project release workflow,
+# update CHANGELOG.md, then publish from a clean tree.
 ```
 
 ## Architecture
@@ -76,9 +77,11 @@ Any new method exposed to JS **must** be declared in `src/NativeNaverLogin.ts` f
 
 ### Platform-specific Notes
 
-**iOS** — The podspec (`NaverLogin.podspec`) uses `install_modules_dependencies(s)` which handles New Architecture linking automatically. The Naver iOS SDK must be added as a pod dependency when implementing authentication.
+**iOS** — The podspec (`NaverLogin.podspec`) uses `install_modules_dependencies(s)` which handles New Architecture linking automatically and declares the `naveridlogin-sdk-ios` dependency.
 
-**Android** — `android/build.gradle` uses `minSdkVersion: 24`, `compileSdkVersion: 36`, Kotlin 2.0.21. The Naver Android SDK (Maven) must be added to `android/build.gradle` dependencies when implementing authentication.
+If iOS fails with missing `ReactCodegen` files after `pod install`, check `example/ios/.xcode.env.local` for a stale hard-coded `NODE_BINARY`. React Native sources `.xcode.env.local` after `.xcode.env`, so the local file overrides the tracked default.
+
+**Android** — `android/build.gradle` uses `minSdkVersion: 24`, `compileSdkVersion: 36`, Kotlin 2.0.21, and declares `com.navercorp.nid:oauth:5.10.0`. The library manifest is intentionally empty; host apps must declare `OAuthLoginActivity` once in the app manifest.
 
 ### Build System
 
@@ -102,19 +105,23 @@ All design and planning documents live under `docs/`:
 | `docs/plans/` | Implementation plans                |
 | `docs/notes/` | Free-form notes and research        |
 
-Current documents:
+Historical design documents:
 
 - `docs/specs/2026-05-07-naver-login-turbomodule-design.md` — Naver Login API design spec
 - `docs/plans/2026-05-07-naver-login-turbomodule.md` — step-by-step implementation plan
 
-## Implementing Naver Login
+## Current Naver Login API
 
-See `docs/plans/2026-05-07-naver-login-turbomodule.md` for the full step-by-step plan. High-level summary:
+The implemented public API is:
 
-1. Replace `src/NativeNaverLogin.ts` spec methods with Naver auth API (`initialize`, `login`, `logout`, `deleteToken`, `getProfile`)
-2. Implement corresponding methods in `ios/NaverLogin.mm` using `naveridlogin-sdk-ios` CocoaPod
-3. Implement corresponding methods in `android/` using `com.navercorp.nid:oauth`
-4. Update `src/index.tsx` exports and add platform wrapper in `src/NaverLogin.native.tsx`
+- `initialize`
+- `login`
+- `refreshToken`
+- `logout`
+- `deleteToken`
+- `getProfile`
+
+When adding or changing a method, update `src/NativeNaverLogin.ts` first, then keep `src/NaverLogin.native.tsx`, `src/NaverLogin.tsx`, `ios/NaverLogin.mm`, `android/src/main/java/com/naverlogin/NaverLoginModule.kt`, README files, and Jest tests in sync.
 
 ## Linting Rules
 

@@ -15,8 +15,15 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for versioning.
 
 - **Package renamed** from `@dongminyu/react-native-naver-login` to `react-native-naver-login-turbo` (personal scope dropped for an unscoped name). The exact unscoped `react-native-naver-login` is taken by an unrelated legacy package, so the `-turbo` suffix both frees the name and signals the New-Architecture (TurboModule) differentiator. Update your import path and dependency to `react-native-naver-login-turbo`.
 
+### Fixed
+
+- iOS `login()` and `refreshToken()` now preserve the never-reject contract for in-progress calls by resolving `{ isSuccess: false }` instead of rejecting with `*_IN_PROGRESS`.
+- Corrected the Android Manifest troubleshooting text: the current library manifest is empty, so host apps must declare `OAuthLoginActivity` exactly once.
+- Removed absent `cpp` and `react-native.config.js` entries from the npm package `files` list.
+
 ### Docs
 
+- Added iOS troubleshooting guidance for stale `ios/.xcode.env.local` `NODE_BINARY` paths causing missing `ReactCodegen` generated-file build failures.
 - Corrected the `getAgreement` migration note in `README.md`, `README.ko.md`, and the design spec. It was incorrectly labelled "Naver API deprecated"; the endpoint (`/v1/nid/agreement`) is still live and documented and upstream still ships it. It is deliberately not ported because it is a niche "약관 동의 대행" REST-only feature that callers can hit directly with their own API client — not because of any deprecation.
 
 ## [0.1.4] - 2026-07-02
