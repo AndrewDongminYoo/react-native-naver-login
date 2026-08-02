@@ -33,7 +33,7 @@ lint:
     - osv-scanner@2.4.0
     - actionlint@1.7.12
     - checkov@3.3.8
-    - eslint@9.39.4
+    - eslint@10.8.0
     - git-diff-check
     - ktlint@1.8.0
     - markdownlint@0.49.1

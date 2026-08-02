@@ -78,7 +78,7 @@
     "@react-native/jest-preset": "0.85.2",
     "@types/react": "^19.2.0",
     "del-cli": "^7.0.0",
-    "eslint": "^9.39.4",
+    "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "jest": "^30.3.0",
