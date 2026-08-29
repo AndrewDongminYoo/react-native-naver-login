@@ -5,6 +5,7 @@ CANCELBYUSER
 codegen
 Dongmin
 dongminyu
+dotenv
 exportcert
 gifs
 gradlew
@@ -30,6 +31,7 @@ podspec
 reactjs
 resultcode
 shellcheck
+shfmt
 Srcs
 storepass
 THIRDPARTYLOGIN
