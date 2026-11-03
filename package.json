@@ -82,7 +82,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.0.0",
     "@react-native/babel-preset": "0.85.2",
     "@react-native/eslint-config": "0.85.2",
